@@ -16,6 +16,9 @@ function [ handles ] = drawRR( joint_angles, robot )
 %                  moving frames attached to the robot
 %
       
+%Initialize parameters
+L_1 = robot.l_1;
+L_2 = robot.l_2;
 
 % Create structure of RR robot forward kinematics transforms
 [~,robot_T] = RRFK(joint_angles,robot);

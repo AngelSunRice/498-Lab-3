@@ -41,23 +41,24 @@ t_f = 10; % [s]
 
 % Initial Conditions
 X_0 = [0, 0, 0, 0]; %%%%%%%%%TBD
-X_dot_0 = [0, 0, 0, 0]; %%%%%%%%%TBD
 
 % Control Gains (Scalar)
 K_p = [];
 K_v = [];
 
 % Numerical Integration
-t = 0:dt:t_f; 
-     
+t = 0:dt:t_f;
+X = X_0; % initialize variable to hold state vector 
+X_dot = [0, 0, 0, 0]; % initialize variable to hold state vector derivatives  
+     %%%%%%%%%TBD
 for i = 1:length(t)
     if i == 1
-        X_dot(i,:) = X_dot_0;
-        X(i,:) = X_0;
+        X_dot(i,:) = X_dot;
+        X(i,:) = X;
     else
     
     % Control torques
-    tau = [0.1;0.2];
+    tau = [1;2];
     
     % Apply joint torque limits
     tau(tau > tau_max) = tau_max;
@@ -84,8 +85,8 @@ for i = 1:length(t)
     %        theta2_double_dot]
     
     X_dot(i,:) = transpose(...
-                 [X(i-1,3);...
-                  X(i-1,4);...
+                 [X_dot(i-1,1);...
+                  X_dot(i-1,2);...
                   M\(tau-C-G)]); %use the inverse of the inertia matrix M(theta)
               %to solve for [theta1_double_dot; theta2_double_dot]
     
@@ -95,9 +96,7 @@ for i = 1:length(t)
        X_dot(i,2) = X_dot(i-1,2) + 0.5 * (X_dot(i-1,4) + X_dot(i,4)); %theta2_dot
        
        X(i,1) = X(i-1,1) + 0.5 * (X_dot(i-1,1) + X_dot(i,1)); %theta1
-       X(i,2) = X(i-1,2) + 0.5 * (X_dot(i-1,2) + X_dot(i,2)); %theta2  
-       X(i,3) = X_dot(i,1);
-       X(i,4) = X_dot(i,2);
+       X(i,2) = X(i-1,2) + 0.5 * (X_dot(i-1,2) + X_dot(i,2)); %theta2       
     end
     
     % Plot Energy
