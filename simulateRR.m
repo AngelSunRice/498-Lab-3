@@ -16,6 +16,20 @@ close all;
 % Initialize robot
 robot = RRInit();
 
+% Initialize the physical parameters
+m_1 = robot.m_1;
+m_2 = robot.m_2;
+m_r1 = robot.m_r1;
+m_r2 = robot.m_r2;
+l_1 = robot.l_1;
+l_2 = robot.l_2;
+M_1 = m_1 + m_r1;
+M_2 = m_2 + m_r2;
+l_c1 = (m_1 + 0.5 * m_r1) * l1 / M_1;
+l_c2 = (m_2 + 0.5 * m_r2) * l1 / M_2;
+I_1 = (1/12) * m_r1 * l_1^2 + m_1 * (l_1/2)^2;
+I_2 = (1/12) * m_r2 * l_2^2 + m_2 * (l_2/2)^2;
+
 % Joint Torque Limit
 tau_max = []; % [N-m] (Scalar)
 
