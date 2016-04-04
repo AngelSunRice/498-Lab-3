@@ -50,6 +50,8 @@ K_v = [];
 % Numerical Integration
 t = 0:dt:t_f; 
      
+X_dot = zeros(length(t),4);
+X = zeros(length(t),4);
 for i = 1:length(t)
     if i == 1
         X_dot(i,:) = X_dot_0;
@@ -57,7 +59,7 @@ for i = 1:length(t)
     else
     
     % Control torques
-    tau = [0.1;0.2];
+    tau = [10;2];
     
     % Apply joint torque limits
     tau(tau > tau_max) = tau_max;
@@ -84,9 +86,9 @@ for i = 1:length(t)
     %        theta2_double_dot]
     
     X_dot(i,:) = transpose(...
-                 [X(i-1,3);...
-                  X(i-1,4);...
-                  M\(tau-C-G)]); %use the inverse of the inertia matrix M(theta)
+                 [X(i - 1,3);...
+                  X(i - 1,4);...
+                  inv(M)*(tau - C - G)]); %use the inverse of the inertia matrix M(theta)
               %to solve for [theta1_double_dot; theta2_double_dot]
     
     % Trapezoidal Integration
@@ -103,6 +105,8 @@ for i = 1:length(t)
     % Plot Energy
     
 end
+
+% robot.handles = drawRR([pi/6, pi/3],robot);
 
 % Graphical Simulation
 robot.handles = drawRR([X(1,1), X(1,2)],robot);
