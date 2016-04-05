@@ -30,7 +30,7 @@ robot.g = 9.81; % [m/s^2]
 robot.tool = [1,0,0,robot.l_2;0,0,-1,0;0,1,0,0;0,0,0,1];
 robot.workspace = [-(robot.l_1 + robot.l_2),-(robot.l_1 + robot.l_2),-robot.l_2;...
                    robot.l_1 + robot.l_2,robot.l_1 + robot.l_2,robot.l_2]; % only used to determine size of figure window
-robot.colors = {[0,1,0],[1,0,0],[0,0,1]};
+robot.colors = {[0.7,0,0.7],[0.8,0,0.4],[0.9,0,0.1]};
 
 end
 
