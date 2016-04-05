@@ -49,24 +49,13 @@ K_p = 10;
 K_v = 8;
 
 % Numerical Integration
-
- %X = 
-    %    [theta1; 
-    %     theta2; 
-    %     theta1_dot; 
-    %     theta2_dot;
-
-    %X_dot = 
-    %       [
-    %        theta1_double_dot;
-    %        theta2_double_dot]
  
-%Initialize the size of X and X_dot    
+% Initialize the size of X and X_dot    
 X_dot = zeros(length(t),2);
 X = zeros(length(t),4);
 
 % KE = kinetic energy
-%PE = potential energy
+% PE = potential energy
 KE = zeros(length(t));
 PE = zeros(length(t));
 
@@ -80,7 +69,7 @@ for i = 1:length(t)
     
     % Control torques
     X_d = [0, pi/2];
-    tau = transpose(-K_p*(X(i,1:2) - X_d) - K_v * X(i,3:4));
+    tau = (-K_p*(X(i,1:2) - X_d) - K_v * X(i,3:4))';
     
     % Apply joint torque limits
     tau(tau > tau_max) = tau_max;
@@ -95,7 +84,7 @@ for i = 1:length(t)
         M_2*g*l_c2*cos(X(i,2))];
     
     % Use the inverse of the inertia matrix M(theta)to solve for [theta1_double_dot; theta2_double_dot]
-    X_dot(i,:) = transpose([inv(M)*(tau - C - G)]);
+    X_dot(i,:) = (M^(-1)*(tau - C - G))';
     
     % Trapezoidal Integration
     % Calculate theta1_dot and theta1_dot at each time increment

@@ -17,24 +17,26 @@ function [tau] = robController(trajectory, Theta, Theta_dot, t, rob)
 % Robot Parameters from rob
 g = rob.parameters.g;
 ...
-
+%keyboard
 % Gravity Compensation Vector
 G = []; %[3x1] vector
 
 % Trajectory interpolation (DO NOT CHANGE)
 Theta_ref = zeros(3,1);
 Theta_dot_ref = zeros(3,1);
+
 for i = 1:3
-    Theta_ref(i) = interp1(trajectory(1,:),trajectory(i+1,:),t);
+    Theta_ref(i) = interp1(trajectory(1,:),trajectory(i+1,:),t);    
     Theta_dot_ref(i) = interp1(trajectory(1,:),trajectory(i+4,:),t);
 end
-
+%keyboard
 % Gravity Compensation Control
 
-K_p = []; % Proportional gain matrix containing gains K_p1 to K_p3
-K_v = []; % Derivative gain matrix containing gains K_v1 to K_v3
+K_p = [505 755 755]; % Proportional gain matrix containing gains K_p1 to K_p3
+K_v = [20 20 20]; % Derivative gain matrix containing gains K_v1 to K_v3
 
-tau = []; % control input (torque)
+% control input (torque)
+tau = - K_p * (Theta - Theta_ref) - K_v * (Theta_dot - Theta_dot_ref); %+ G;
 
 end
 
