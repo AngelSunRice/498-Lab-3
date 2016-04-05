@@ -1,4 +1,5 @@
 function [ trajectory ] = createRobTrajectory( via, rob )
+
 % MECH 498/598 - Intro to Robotics - Spring 2016
 % Lab 3
 % Solutions by Craig McDonald
@@ -20,9 +21,29 @@ function [ trajectory ] = createRobTrajectory( via, rob )
 
 t_f = 30; % final time (do not change) [s]
 
-trajectory(1,:) = []; %Time
-trajectory(2:4,:) = []; %Joint angles
-trajectory(5:7,:) = []; %Joiint velocities
+home_pos_b = via(:,1)';
+ball_strt = via(:,2)';
+ball_end = via(:,3)';
+home_pos_e = via(:,4)';
+prev_angles = zeros(1,6);
+
+path1 = interp1([1 t_f/3], [home_pos_b; ball_strt], 1:t_f / 3);
+path2 = interp1([t_f/3 + 1 t_f/3*2], [ball_strt; ball_end], t_f/3 + 1:t_f/3 * 2);
+path3 = interp1([t_f/3*2 + 1 t_f], [ball_end; home_pos_e], t_f/3*2 + 1:t_f);
+full_path = [path1; path2; path3];
+angle_path = zeros(3,t_f);
+vel_path = zeros(3,t_f);
+
+for i = 1:1:t_f
+    [~, joint_angles] = robIK(full_path(i,:), prev_angles, rob);
+    prev_angles = [joint_angles 0 0 0];
+    angle_path(:,i) = joint_angles(1:3)';
+    vel_path(:, i) = angle_path(:,i).* angle_path(:,i);
+end
+
+trajectory(1,:) = 1:t_f; %Time
+trajectory(2:4,:) = angle_path; %Joint angles
+trajectory(5:7,:) = vel_path; %Joint velocities
 
 end
 

@@ -1,4 +1,7 @@
-function [ tau ] = robController( trajectory, Theta, Theta_dot, t , rob )
+% yg18, as99
+
+function [tau] = robController(trajectory, Theta, Theta_dot, t, rob)
+
 % MECH 498/598 - Intro to Robotics - Spring 2016
 % Lab 3
 % Solutions by Craig McDonald
@@ -10,12 +13,11 @@ function [ tau ] = robController( trajectory, Theta, Theta_dot, t , rob )
 %    actua position is Theta, and the actual velocity is Theta_dot.
 %    Calculate the torques needed to add gravity compensation using the
 %    robot parameters from the structure rob.
-%
 
 % Robot Parameters from rob
 g = rob.parameters.g;
 ...
-    
+
 % Gravity Compensation Vector
 G = []; %[3x1] vector
 
