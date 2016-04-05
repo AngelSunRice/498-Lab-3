@@ -38,27 +38,42 @@ tau_max = 20; % [N-m] (Scalar)
 % Time
 dt = 0.01; % [s] 
 t_f = 10; % [s]  
+t = 0:dt:t_f; 
 
 % Initial Conditions
-X_0 = [0, 0, 0, 0]; %%%%%%%%%TBD
-X_dot_0 = [0, 0]; %%%%%%%%%TBD
+X_0 = [0, 0, 0, 0]; 
+X_dot_0 = [0, 0]; 
 
 % Control Gains (Scalar)
 K_p = 10;
 K_v = 8;
 
 % Numerical Integration
-t = 0:dt:t_f; 
-     
+
+ %X = 
+    %    [theta1; 
+    %     theta2; 
+    %     theta1_dot; 
+    %     theta2_dot;
+
+    %X_dot = 
+    %       [
+    %        theta1_double_dot;
+    %        theta2_double_dot]
+ 
+%Initialize the size of X and X_dot    
 X_dot = zeros(length(t),2);
 X = zeros(length(t),4);
 
+% KE = kinetic energy
+%PE = potential energy
 KE = zeros(length(t));
 PE = zeros(length(t));
 
 hold on;
 for i = 1:length(t)
     if i == 1
+    %The first movement should be the inital condition
         X_dot(i,:) = X_dot_0;
         X(i,:) = X_0;
     else
@@ -72,29 +87,18 @@ for i = 1:length(t)
     tau(tau < -tau_max) = -tau_max;
     
     % Dynamic Model
-    M = [M_1*l_c1^2+M_2*(l_1+l_c2*cos(X(i,2)))+I_1+I_2, 0;...
-        0, M_2*l_c2*2+I_2];
+    M = [M_1*l_c1^2+M_2*(l_1+l_c2*cos(X(i,2)))+I_1+I_2, 0             ;...
+         0                                            , M_2*l_c2*2+I_2];
     C = [-2*M_2*l_c2*sin(X(i,2))*(l_1+l_c2*cos(X(i,2))*X(i,3)*X(i,4));...
         M_2*l_c2*sin(X(i,2))*(l_1+l_c2*cos(X(i,2)))];
     G = [0;...
         M_2*g*l_c2*cos(X(i,2))];
-
-    %X = 
-    %    [theta1; 
-    %     theta2; 
-    %     theta1_dot; 
-    %     theta2_dot;
-
-    %X_dot = 
-    %       [
-    %        theta1_double_dot;
-    %        theta2_double_dot]
     
-    X_dot(i,:) = transpose([inv(M)*(tau - C - G)]); 
-    %use the inverse of the inertia matrix M(theta)to solve for [theta1_double_dot; theta2_double_dot]
+    % Use the inverse of the inertia matrix M(theta)to solve for [theta1_double_dot; theta2_double_dot]
+    X_dot(i,:) = transpose([inv(M)*(tau - C - G)]);
     
     % Trapezoidal Integration
-       %Calculate theta1_dot and theta1_dot at each time increment
+    % Calculate theta1_dot and theta1_dot at each time increment
     X(i+1,3:4) = X(i,3:4) + X_dot(i,:)*0.01;
     X(i+1,1:2) = X(i,1:2) + 0.5.*(X(i,3:4) + X(i+1,3:4))*0.01;
     
@@ -107,20 +111,30 @@ for i = 1:length(t)
 end
 hold off;
 
+title('The Kinetic Energy and Potential Energy VS Time');
+legend('KE', 'PE');
+xlabel('Time (s)');
+ylabel('Energy');
 
 % Graphical Simulation
 robot.handles = drawRR([X(1,1), X(1,2)],robot);
 for i = 2:length(t)
-    setRR([X(i,1), X(i,2)],...  %angles
-          robot); %robot
+    setRR([X(i,1), X(i,2)],robot); 
     pause(1e-6); % adjustable pause in seconds
 end
 
 % Plot Output
 figure
 plot(t, X(1:length(t),1));
+title('Theta_1 VS Time');
+xlabel('Time (s)');
+ylabel('Theta_1');
+
 figure
 plot(t, X(1:length(t),2));
+title('Theta_2 VS Time');
+xlabel('Time (s)');
+ylabel('Theta_2');
 
 end
 
